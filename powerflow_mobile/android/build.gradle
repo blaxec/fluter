@@ -19,26 +19,24 @@ rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-subprojects {
-    project.evaluationDependsOn(':app')
-}
-
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
-}
-
 subprojects { 
-    afterEvaluate { project -> 
-        if (project.hasProperty('android')) { 
-            project.android { 
-                if (namespace == 'com.pichillilorenzo.flutter_inappwebview_android') { 
-                    buildTypes { 
-                        release { 
-                            getDefaultProguardFile('proguard-android-optimize.txt') 
-                        } 
-                    } 
-                } 
-            } 
-        } 
-    } 
-}
+     project.evaluationDependsOn(':app') 
+ } 
+ 
+ // Новый жесткий фикс для flutter_inappwebview без использования afterEvaluate 
+ subprojects { subproject -> 
+     subproject.plugins.withId('com.android.library') { 
+         def androidExtension = subproject.extensions.findByName('android') 
+         if (androidExtension != null) { 
+             androidExtension.buildTypes { 
+                 release { 
+                     getDefaultProguardFile('proguard-android-optimize.txt') 
+                 } 
+             } 
+         } 
+     } 
+ } 
+ 
+ tasks.register("clean", Delete) { 
+     delete rootProject.buildDir 
+ }
