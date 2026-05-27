@@ -25,8 +25,30 @@ class DatabaseHelper {
     );
   }
 
+  static const Map<String, int> defaultConfigs = {
+    "prepTime": 5,
+    "circuitsCount": 3,
+    "tueDeepPushupsReps": 13,
+    "tueAnglePushupsReps": 8,
+    "tueDiamondPushupsReps": 7,
+    "tueElevatedPushupsReps": 14,
+    "tueCircuitRest": 60,
+    "thuLungesReps": 21,
+    "thuSquatsReps": 21,
+    "thuCalvesReps": 40,
+    "thuAbsReps": 16,
+    "thuCircuitRest": 60,
+    "friNegTime1": 5,
+    "friNegTime2": 5,
+    "friNegTime3": 5,
+    "friRestNeg": 10,
+    "friRowReps": 30,
+    "friNarrowReps": 4,
+    "friCircuitRest": 60
+  };
+
   Future<void> _createDB(Database db, int version) async {
-    // Configs Table for on-device configurations
+    // ... tables creation ...
     await db.execute('''
       CREATE TABLE configs (
         key TEXT PRIMARY KEY,
@@ -34,7 +56,7 @@ class DatabaseHelper {
       )
     ''');
 
-    // Sessions Table to record history logs
+    // ... other tables ...
     await db.execute('''
       CREATE TABLE sessions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,7 +67,6 @@ class DatabaseHelper {
       )
     ''');
 
-    // Individual exercise results
     await db.execute('''
       CREATE TABLE results (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,28 +80,6 @@ class DatabaseHelper {
     ''');
 
     // Populate Default Configurations
-    final Map<String, int> defaultConfigs = {
-      "prepTime": 5,
-      "circuitsCount": 3,
-      "tueDeepPushupsReps": 13,
-      "tueAnglePushupsReps": 8,
-      "tueDiamondPushupsReps": 7,
-      "tueElevatedPushupsReps": 14,
-      "tueCircuitRest": 60,
-      "thuLungesReps": 21,
-      "thuSquatsReps": 21,
-      "thuCalvesReps": 40,
-      "thuAbsReps": 16,
-      "thuCircuitRest": 60,
-      "friNegTime1": 5,
-      "friNegTime2": 5,
-      "friNegTime3": 5,
-      "friRestNeg": 10,
-      "friRowReps": 30,
-      "friNarrowReps": 4,
-      "friCircuitRest": 60
-    };
-
     final batch = db.batch();
     defaultConfigs.forEach((k, v) {
       batch.insert('configs', {'key': k, 'value': v});

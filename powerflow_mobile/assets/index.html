@@ -69,7 +69,7 @@
         <div class="flex bg-gray-900/85 p-1.5 rounded-xl border border-gray-800 self-center md:self-start gap-1">
             <button id="tabTuesday" class="px-4 py-2 text-xs font-bold rounded-lg transition-all focus:outline-none text-gray-400 hover:text-white hover:bg-gray-800/50">Вторник (Грудь/Трицепс)</button>
             <button id="tabThursday" class="px-4 py-2 text-xs font-bold rounded-lg transition-all focus:outline-none text-gray-400 hover:text-white hover:bg-gray-800/50">Четверг (Ноги/Пресс)</button>
-            <button id="tabFriday" class="px-4 py-2 text-xs font-bold rounded-lg transition-all focus:outline-none text-gray-400 hover:text-white hover:bg-gray-800/50">Пятница (Спина/Бицепс)</button>
+            <button id="tabFriday" class="px-4 py-2 text-xs font-bold rounded-lg transition-all focus:outline-none text-gray-400 hover:text-white hover:bg-gray-800/50">Суббота (Спина/Бицепс)</button>
         </div>
 
         <!-- УВЕДОМЛЕНИЕ О СМЕЩЕНИИ -->
@@ -503,7 +503,7 @@
                         },
                         {
                             num: 2.0,
-                            circuitsCount: 2,
+                            circuitsCount: 3,
                             exercises: [
                                 { name: "Подъемы на носках", excelName: "Подъемы на носках", targetRepsKey: "thuCalvesReps", setsCount: 2, hasLegs: true },
                                 { name: "Пресс (поднятие ног)", excelName: "Пресс (поднятие ног)", targetRepsKey: "thuAbsReps", setsCount: 1 }
@@ -561,7 +561,11 @@
         function getSessionTarget(baseValue) {
             const shiftInfo = checkDayShift();
             if (shiftInfo.isShifted) {
+                // User requirement: add +10% (at least 1 rep) if shifted.
+                // "добавляя один повтор в одном каком то круге" - interpreted as increasing target for the session.
                 const increase = Math.max(1, Math.ceil(baseValue * 0.1));
+                
+                // For "Negatives" (time-based), we also add 10%
                 return baseValue + increase;
             }
             return baseValue;

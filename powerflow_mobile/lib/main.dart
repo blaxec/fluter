@@ -194,9 +194,27 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
       handlerName: 'saveConfig',
       callback: (args) async {
         try {
+          if (args.isEmpty || args[0] is! String) {
+            print("NATIVE SAVE CONFIG ERROR: Invalid arguments");
+            return false;
+          }
           final String configJson = args[0] as String;
           final Map<String, dynamic> configMap = jsonDecode(configJson);
-          await DatabaseHelper.instance.saveConfig(configMap);
+          
+          // Basic validation: ensure all values are integers
+          final Map<String, int> validatedMap = {};
+          configMap.forEach((key, value) {
+            if (value is int) {
+              validatedMap[key] = value;
+            } else if (value is String) {
+              final parsed = int.tryParse(value);
+              if (parsed != null) validatedMap[key] = parsed;
+            }
+          });
+
+          if (validatedMap.isEmpty) return false;
+
+          await DatabaseHelper.instance.saveConfig(validatedMap);
           return true;
         } catch (e) {
           print("NATIVE SAVE CONFIG ERROR: $e");

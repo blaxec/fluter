@@ -114,29 +114,26 @@ class SyncService {
           return true;
         }
       } else {
-        // File exists on Drive; we check timestamps or download it if local doesn't exist
+        // File exists on Drive; we check timestamps
+        final driveMetadata = await _driveApi!.files.get(
+          fileId,
+          $fields: 'id, name, modifiedTime',
+        ) as drive.File;
+
+        final DateTime? driveModified = driveMetadata.modifiedTime;
+        
         if (!await localFile.exists()) {
-          final response = await _driveApi!.files.get(
-            fileId,
-            downloadOptions: drive.DownloadOptions.metadata,
-          ) as drive.File;
-          
-          final mediaResponse = await _driveApi!.files.get(
-            fileId,
-            downloadOptions: drive.DownloadOptions.fullMedia,
-          ) as drive.Media;
-          
-          final List<int> dataBytes = [];
-          await for (var chunk in mediaResponse.stream) {
-            dataBytes.addAll(chunk);
-          }
-          
-          await localFile.create(recursive: true);
-          await localFile.writeAsBytes(dataBytes, flush: true);
-          print("DOWNLOADED WORKBOOK FROM DRIVE");
-          return true;
+          return await _downloadFromDrive(fileId, localFile);
         } else {
-          // Both exist: let's push local changes to Drive
+          final DateTime localModified = await localFile.lastModified();
+          
+          // If Drive is newer than local (by more than a small buffer to avoid jitter)
+          if (driveModified != null && driveModified.isAfter(localModified.add(const Duration(seconds: 2)))) {
+            print("REMOTE FILE IS NEWER, DOWNLOADING BEFORE UPDATE");
+            await _downloadFromDrive(fileId, localFile);
+          }
+
+          // Now push local changes to Drive (they are now merged if we downloaded)
           final media = drive.Media(
             localFile.openRead(),
             await localFile.length(),
@@ -157,6 +154,25 @@ class SyncService {
       print("SYNC WORKBOOK ERROR: $e");
     }
     return false;
+  }
+
+  Future<bool> _downloadFromDrive(String fileId, File localFile) async {
+    final mediaResponse = await _driveApi!.files.get(
+      fileId,
+      downloadOptions: drive.DownloadOptions.fullMedia,
+    ) as drive.Media;
+    
+    final List<int> dataBytes = [];
+    await for (var chunk in mediaResponse.stream) {
+      dataBytes.addAll(chunk);
+    }
+    
+    if (!await localFile.exists()) {
+      await localFile.create(recursive: true);
+    }
+    await localFile.writeAsBytes(dataBytes, flush: true);
+    print("DOWNLOADED WORKBOOK FROM DRIVE");
+    return true;
   }
 
   // Background queue worker to process offline saved sessions

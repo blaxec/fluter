@@ -45,9 +45,7 @@ class ExcelEngine {
 
     for (int c = 1; c <= 3; c++) {
       mapping["friday|тяга гантелей в наклоне|левая рука|$c"] = 42 + c - 2; // Row 42, 43, 44
-      mapping["friday|тяга гантелей в наклоне|левая нога|$c"] = 42 + c - 2;
       mapping["friday|тяга гантелей в наклоне|правая рука|$c"] = 45 + c - 2; // Row 45, 46, 47
-      mapping["friday|тяга гантелей в наклоне|правая нога|$c"] = 45 + c - 2;
       mapping["friday|подтягивания узким хватом||$c"] = 48 + c - 2; // Row 48, 49, 50
     }
 
@@ -158,28 +156,65 @@ class ExcelEngine {
       final String fallbackKey = "$day|$ex||$circuit";
 
       int? targetRowIdx;
-      if (_rowMapping.containsKey(primaryKey)) {
-        targetRowIdx = _rowMapping[primaryKey];
-      } else if (_rowMapping.containsKey(fallbackKey)) {
-        targetRowIdx = _rowMapping[fallbackKey];
-      }
-
-      if (targetRowIdx != null) {
-        sheet.updateCell(
-          CellIndex.indexByColumnRow(columnIndex: targetColIdx, rowIndex: targetRowIdx),
-          IntCellValue(value),
-        );
-        writtenCount++;
-      }
+    if (_rowMapping.containsKey(primaryKey)) {
+      targetRowIdx = _rowMapping[primaryKey];
+    } else if (_rowMapping.containsKey(fallbackKey)) {
+      targetRowIdx = _rowMapping[fallbackKey];
     }
 
-    // Save and overwrite the file bytes
-    final List<int>? fileOut = excel.encode();
-    if (fileOut != null) {
-      await file.writeAsBytes(fileOut, flush: true);
+    // Safety Fallback: Search by name if mapping fails or to verify
+    if (targetRowIdx == null) {
+      targetRowIdx = _findRowByExerciseName(sheet, ex, sub, circuit);
     }
 
-    print("SUCCESSFUL EXCEL UPDATE: Saved $writtenCount cells in column ${targetColIdx + 1}");
-    return file;
+    if (targetRowIdx != null) {
+      sheet.updateCell(
+        CellIndex.indexByColumnRow(columnIndex: targetColIdx, rowIndex: targetRowIdx),
+        IntCellValue(value),
+      );
+      writtenCount++;
+    }
   }
+
+  // Save and overwrite the file bytes
+  final List<int>? fileOut = excel.encode();
+  if (fileOut != null) {
+    await file.writeAsBytes(fileOut, flush: true);
+  }
+
+  print("SUCCESSFUL EXCEL UPDATE: Saved $writtenCount cells in column ${targetColIdx + 1}");
+  return file;
+}
+
+// Helper to find a row index by scanning the first few columns for the exercise name
+int? _findRowByExerciseName(Sheet sheet, String exercise, String sub, int circuit) {
+  // We search in the first 3 columns for a match
+  // Row scanning limit to avoid performance issues
+  for (int r = 0; r < 100; r++) {
+    for (int c = 0; c < 3; c++) {
+      final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: c, rowIndex: r));
+      final val = cell.value?.toString().toLowerCase() ?? '';
+      
+      if (val.contains(exercise)) {
+        // If there's a sub-category, check it too
+        if (sub.isNotEmpty) {
+          bool subFound = false;
+          // Check same row or next few rows for sub-category
+          for (int subR = r; subR < r + 5; subR++) {
+            for (int subC = 0; subC < 3; subC++) {
+              final subCell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: subC, rowIndex: subR));
+              if (subCell.value?.toString().toLowerCase().contains(sub) == true) {
+                // Now check for circuit match in that area
+                // (This is a simplified heuristic)
+                return subR; 
+              }
+            }
+          }
+        }
+        return r;
+      }
+    }
+  }
+  return null;
+}
 }
