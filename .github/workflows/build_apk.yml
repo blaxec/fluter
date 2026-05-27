@@ -39,6 +39,11 @@ jobs:
           flutter create . --platforms=android
           flutter pub get
 
+      # 4.5 Patch flutter_inappwebview_android proguard issue
+      - name: Patch flutter_inappwebview_android proguard issue
+        run: |
+          find /home/runner/.pub-cache -name "build.gradle" -path "*/flutter_inappwebview_android*/android/build.gradle" -exec sed -i 's/proguard-android.txt/proguard-android-optimize.txt/g' {} +
+
       # 5. Собираем APK и принудительно пропускаем проверку версий Kotlin 
       - name: Build APK 
         run: | 
