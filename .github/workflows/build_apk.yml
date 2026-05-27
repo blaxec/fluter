@@ -39,11 +39,11 @@ jobs:
           flutter create . --platforms=android
           flutter pub get
 
-      # 5. Собираем APK внутри папки проекта
+      # 5. Собираем APK с флагом исправления Proguard
       - name: Build APK
         run: |
           cd powerflow_mobile
-          flutter build apk --release
+          flutter build apk --release --extra-front-end-options=--no-implicit-dynamic-calls
 
       # 6. Загружаем готовый файл (путь к артефакту тоже меняется)
       - name: Upload APK Artifact
