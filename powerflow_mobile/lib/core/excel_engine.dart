@@ -36,12 +36,12 @@ class ExcelEngine {
     }
 
     // Friday (СБ)
-    mapping["friday|нега-ые подтягивания (сек)||$1"] = 36 - 1; // Row 36
-    mapping["friday|нега-ые подтягивания (сек)||$2"] = 38 - 1; // Row 38
-    mapping["friday|нега-ые подтягивания (сек)||$3"] = 40 - 1; // Row 40
-    mapping["friday|негативные подтягивания||$1"] = 36 - 1;
-    mapping["friday|негативные подтягивания||$2"] = 38 - 1;
-    mapping["friday|негативные подтягивания||$3"] = 40 - 1;
+    mapping["friday|нега-ые подтягивания (сек)||\$1"] = 36 - 1; // Row 36
+    mapping["friday|нега-ые подтягивания (сек)||\$2"] = 38 - 1; // Row 38
+    mapping["friday|нега-ые подтягивания (сек)||\$3"] = 40 - 1; // Row 40
+    mapping["friday|негативные подтягивания||\$1"] = 36 - 1;
+    mapping["friday|негативные подтягивания||\$2"] = 38 - 1;
+    mapping["friday|негативные подтягивания||\$3"] = 40 - 1;
 
     for (int c = 1; c <= 3; c++) {
       mapping["friday|тяга гантелей в наклоне|левая рука|$c"] = 42 + c - 2; // Row 42, 43, 44
@@ -95,7 +95,7 @@ class ExcelEngine {
     while (true) {
       // Fetch cell at Row 2 (0-indexed 3rd row)
       final Data? cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: targetColIdx, rowIndex: 2));
-      final dynamic cellVal = cell.value;
+      final dynamic cellVal = cell?.value;
 
       if (cellVal == null) {
         // Write today's date as column header

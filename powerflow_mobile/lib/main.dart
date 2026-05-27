@@ -14,9 +14,9 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.black,
     statusBarBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.white,
+    statusBarIconBrightness: Brightness.light,
     systemNavigationBarColor: Colors.black,
-    systemNavigationBarIconBrightness: Brightness.white,
+    systemNavigationBarIconBrightness: Brightness.light,
   ));
 
   // Lock phone orientation to vertical for better athlete usage
