@@ -32,11 +32,10 @@ jobs:
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
           cache-path: "${{ github.workspace }}/powerflow_mobile/.pub-cache"
 
-      # 4. Пересоздаем андроид-файлы строго внутри папки проекта
-      - name: Repair and Update Android Project Configuration
+      # 4. Получаем зависимости
+      - name: Install dependencies
         run: |
           cd powerflow_mobile
-          flutter create . --platforms=android
           flutter pub get
 
       # 4.5 Patch flutter_inappwebview_android proguard issue
@@ -44,11 +43,11 @@ jobs:
         run: |
           find /home/runner/.pub-cache -name "build.gradle" -path "*/flutter_inappwebview_android*/android/build.gradle" -exec sed -i 's/proguard-android.txt/proguard-android-optimize.txt/g' {} +
 
-      # 5. Собираем APK и принудительно пропускаем проверку версий Kotlin 
+      # 5. Собираем APK
       - name: Build APK 
         run: | 
           cd powerflow_mobile 
-          flutter build apk --release --android-skip-build-dependency-validation
+          flutter build apk --release --android-skip-build-dependency-validation --no-tree-shake-icons
 
       # 6. Загружаем готовый файл (путь к артефакту тоже меняется)
       - name: Upload APK Artifact

@@ -17,9 +17,10 @@ dependencies:
   google_sign_in: ^6.2.1
   googleapis: ^13.1.0
   path_provider: ^2.1.1
-  vibration: ^1.8.4
+  vibration: 1.8.4
   connectivity_plus: ^5.0.2
-  shared_preferences: ^2.2.2
+  device_info_plus: ^10.1.0
+  shared_preferences: ^2.2.3
   http: ^1.2.0
 
 dev_dependencies:

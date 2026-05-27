@@ -1,48 +1,18 @@
-buildscript { 
-    ext.kotlin_version = '1.9.24' 
-    repositories { 
-        google() 
-        mavenCentral() 
-    } 
-    dependencies { 
-        classpath 'com.android.tools.build:gradle:8.1.0' 
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" 
-    } 
-} 
-
-allprojects { 
-    repositories { 
-        google() 
-        mavenCentral() 
-    } 
-} 
-
-rootProject.buildDir = '../build' 
-subprojects { 
-    project.buildDir = "${rootProject.buildDir}/${project.name}" 
-} 
-subprojects {
-    project.evaluationDependsOn(':app')
-
-    def configureAndroidNamespace = { proj ->
-        if (proj.hasProperty('android')) {
-            proj.android {
-                if (namespace == null) {
-                    namespace proj.group
-                }
-            }
-        }
-    }
-
-    if (project.state.executed) {
-        configureAndroidNamespace(project)
-    } else {
-        project.afterEvaluate {
-            configureAndroidNamespace(it)
-        }
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
     }
 }
 
-tasks.register("clean", Delete) { 
-    delete rootProject.buildDir 
-} 
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
