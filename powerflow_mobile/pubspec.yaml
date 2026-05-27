@@ -1,0 +1,34 @@
+name: powerflow_mobile
+description: "A premium, fully offline-first cross-platform workout schedule timer and tracker."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_inappwebview: ^6.0.0
+  sqflite: ^2.3.0
+  path: ^1.9.0
+  excel: ^4.0.6
+  google_sign_in: ^6.2.1
+  googleapis: ^13.1.0
+  path_provider: ^2.1.1
+  vibration: ^1.8.4
+  connectivity_plus: ^5.0.2
+  shared_preferences: ^2.2.2
+  http: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/index.html
+    - assets/Новая таблица.xlsx

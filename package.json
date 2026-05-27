@@ -1,0 +1,15 @@
+{
+  "name": "powerflow-workout",
+  "version": "2.0.0",
+  "description": "PowerFlow Desktop Workout Timer",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

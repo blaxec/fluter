@@ -1,0 +1,34 @@
+node_modules/
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.history
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Flutter / Dart caches
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Local configuration and properties
+local.properties
+key.properties
+*.keystore
+*.jks
+
+# Output builds
+*.apk
+*.aab

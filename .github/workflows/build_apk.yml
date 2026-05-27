@@ -1,0 +1,53 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Скачиваем код
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. Настраиваем Java БЕЗ автопоиска gradle
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. Настраиваем Flutter (переносим кэш внутрь папки проекта)
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+          cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
+          cache-path: "${{ github.workspace }}/powerflow_mobile/.pub-cache"
+
+      # 4. Пересоздаем андроид-файлы строго внутри папки проекта
+      - name: Repair and Update Android Project Configuration
+        run: |
+          cd powerflow_mobile
+          flutter create . --platforms=android
+          flutter pub get
+
+      # 5. Собираем APK внутри папки проекта
+      - name: Build APK
+        run: |
+          cd powerflow_mobile
+          flutter build apk --release
+
+      # 6. Загружаем готовый файл (путь к артефакту тоже меняется)
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: powerflow_mobile/build/app/outputs/flutter-apk/app-release.apk

@@ -1,0 +1,21 @@
+{
+  "prepTime": 5,
+  "circuitsCount": 3,
+  "tueDeepPushupsReps": 13,
+  "tueAnglePushupsReps": 8,
+  "tueDiamondPushupsReps": 7,
+  "tueElevatedPushupsReps": 14,
+  "tueCircuitRest": 60,
+  "thuLungesReps": 21,
+  "thuSquatsReps": 21,
+  "thuCalvesReps": 40,
+  "thuAbsReps": 16,
+  "thuCircuitRest": 60,
+  "friNegTime1": 5,
+  "friNegTime2": 5,
+  "friNegTime3": 5,
+  "friRestNeg": 10,
+  "friRowReps": 30,
+  "friNarrowReps": 4,
+  "friCircuitRest": 60
+}
