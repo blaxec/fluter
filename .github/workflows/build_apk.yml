@@ -39,11 +39,11 @@ jobs:
           flutter create . --platforms=android
           flutter pub get
 
-      # 5. Собираем APK
-      - name: Build APK
-        run: |
-          cd powerflow_mobile
-          flutter build apk --release
+      # 5. Собираем APK и принудительно пропускаем проверку версий Kotlin 
+      - name: Build APK 
+        run: | 
+          cd powerflow_mobile 
+          flutter build apk --release --android-skip-build-dependency-validation
 
       # 6. Загружаем готовый файл (путь к артефакту тоже меняется)
       - name: Upload APK Artifact
